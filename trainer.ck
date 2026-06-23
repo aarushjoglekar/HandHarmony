@@ -19,6 +19,8 @@ oin.addAddress("/hand/present");
 float features[4];
 int handPresent;
 int exampleCounts[8];
+float trainingFeatures[0][4];
+int trainingLabels[0];
 
 // fingering names
 string fingeringNames[8];
@@ -59,32 +61,34 @@ fun void keyListener() {
         while (kb.more()) {
             kb.getchar() => int key;
 
-            if (key >= 48 && key <= 55) {  // ASCII 0-7
+            // ascii 0-7
+            if (key >= 48 && key <= 55) {
                 key - 48 => int label;
-
                 if (handPresent) {
-                    wek.add(features, [label $ float]);
+                    trainingFeatures << features;
+                    trainingLabels << label;
                     exampleCounts[label]++;
-                    wek.nextRound();
-                    <<< "✓ Recorded", fingeringNames[label],
-                        "(", exampleCounts[label], "examples so far)" >>>;
+                    <<< "Recorded", fingeringNames[label], "(", exampleCounts[label], "examples so far)" >>>;
                 }
-            }
-
-            // T (train)
-            else if (key == 116) {
-                <<< "⏳ Training...", "" >>>;
-                wek.train();
-                <<< "Training complete!" >>>;
             }
 
             // S (save)
             else if (key == 115) {
-                wek.save("./fingering_model.txt");
-                <<< "Model saved!" >>>;
+                FileIO f;
+                f.open("./fingering_model.txt", FileIO.WRITE);
+                f <= trainingLabels.size() <= "\n";
+                for (0 => int i; i < trainingLabels.size(); i++) {
+                    f <= trainingFeatures[i][0] <= " "
+                      <= trainingFeatures[i][1] <= " "
+                      <= trainingFeatures[i][2] <= " "
+                      <= trainingFeatures[i][3] <= " "
+                      <= trainingLabels[i] <= "\n";
+                }
+                f.close();
+                <<< "Saved", trainingLabels.size(), "examples" >>>;
             }
 
-            // P 
+            // P (print sample counts)
             else if (key == 112) {
                 <<< "─── Example counts ───", "" >>>;
                 for (0 => int i; i < 8; i++) {
@@ -93,7 +97,7 @@ fun void keyListener() {
                 <<< "──────────────────────", "" >>>;
             }
 
-            // Q: quit
+            // Q (quit)
             else if (key == 113) {
                 me.exit();
             }
