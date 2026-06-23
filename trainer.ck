@@ -1,13 +1,3 @@
-global Wekinator wek;
-wek.clear();
-
-wek.inputDims(4);
-wek.outputDims(1);
-wek.taskType(AI.Classification);
-wek.modelType(AI.KNN);
-wek.setProperty(AI.KNN, "k", 5);
-wek.setProperty(AI.Classification, "classes", 8);
-
 // OSC setup
 OscIn  oin;
 OscMsg msg;
