@@ -35,7 +35,6 @@ def main():
         raise RuntimeError("Could not open webcam.")
 
     print(f"Sending OSC to {OSC_IP}:{OSC_PORT}  address={OSC_ADDR}")
-    print("Press Q to quit.\n")
 
     with mp.solutions.hands.Hands(
         model_complexity=0,  # 0 = fast, 1 = accurate
