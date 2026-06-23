@@ -7,6 +7,7 @@ from pythonosc import udp_client
 OSC_IP = "127.0.0.1"
 OSC_PORT = 6448
 OSC_ADDR = "/hand/features"
+OSC_ADDR_ACTIVE = "/hand/present"
 
 # MediaPipe hand landmark indices
 WRIST = 0
@@ -66,7 +67,7 @@ def main():
                 d_ring = normalized_dist(lm, RING_TIP, THUMB_TIP, INDEX_MCP)
                 d_pinky = normalized_dist(lm, PINKY_TIP, THUMB_TIP, INDEX_MCP)
 
-                client.send_message("/hand/present", [1.0]) # 1.0 means present
+                client.send_message(OSC_ADDR_ACTIVE, [1.0]) # 1.0 means present
                 client.send_message(OSC_ADDR, [d_index, d_middle, d_ring, d_pinky])
 
                 # draw landmarks on frame
@@ -78,7 +79,7 @@ def main():
                     mp.solutions.drawing_styles.get_default_hand_connections_style(),
                 )
             else:
-                client.send_message("/hand/present", [0.0]) # 0.0 means not present
+                client.send_message(OSC_ADDR_ACTIVE, [0.0]) # 0.0 means not present
                 client.send_message(OSC_ADDR, [0.0, 0.0, 0.0, 0.0])
 
             cv2.imshow("Hand Tracker  (Q to quit)", frame)

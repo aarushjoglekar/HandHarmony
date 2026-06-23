@@ -65,7 +65,14 @@ fun void keyListener() {
             if (key >= 48 && key <= 55) {
                 key - 48 => int label;
                 if (handPresent) {
-                    trainingFeatures << features;
+
+                    float snapshot[4];
+                    features[0] => snapshot[0];
+                    features[1] => snapshot[1];
+                    features[2] => snapshot[2];
+                    features[3] => snapshot[3];
+                    trainingFeatures << snapshot;
+
                     trainingLabels << label;
                     exampleCounts[label]++;
                     <<< "Recorded", fingeringNames[label], "(", exampleCounts[label], "examples so far)" >>>;
