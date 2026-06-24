@@ -46,7 +46,7 @@ fun void oscListener() {
                 msg.getFloat(3) => features[3];
 
                 if (handPresent) {
-                    5.0 => mute.gain;
+                    50.0 => mute.gain;
 
                     knn.predict(features, 5, prob);
                     0 => int best;
