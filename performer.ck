@@ -13,6 +13,7 @@ for (0 => int i; i < numExamples; i++) {
 }
 f.close();
 
+// train k-nearest neighbors
 KNN2 knn;
 knn.train(trainingFeatures, trainingLabels);
 
@@ -26,26 +27,48 @@ oin.addAddress("/hand/present");
 float features[4];
 int handPresent;
 float prob[8];
+int currentClass;
+int lastPredicted;
 
-while (true) {
-    oin => now;
-    while (oin.recv(msg)) {
-        if (msg.address == "/hand/features") {
-            msg.getFloat(0) => features[0];
-            msg.getFloat(1) => features[1];
-            msg.getFloat(2) => features[2];
-            msg.getFloat(3) => features[3];
+// pitch shift setup
+adc => PitShift ps => Gain mute => dac;
+1.0 => ps.mix;
+[1.0, 9.0/8, 5.0/4, 4.0/3, 3.0/2, 5.0/3, 15.0/8, 2.0] @=> float noteRatios[];
 
-            if (handPresent) {
-                knn.predict(features, 5, prob);
-                0 => int best;
-                for (1 => int i; i < 8; i++) {
-                    if (prob[i] > prob[best]) i => best;
+fun void oscListener() {
+    while (true) {
+        oin => now;
+        while (oin.recv(msg)) {
+            if (msg.address == "/hand/features") {
+                msg.getFloat(0) => features[0];
+                msg.getFloat(1) => features[1];
+                msg.getFloat(2) => features[2];
+                msg.getFloat(3) => features[3];
+
+                if (handPresent) {
+                    5.0 => mute.gain;
+
+                    knn.predict(features, 5, prob);
+                    0 => int best;
+                    for (1 => int i; i < 8; i++) {
+                        if (prob[i] > prob[best]) i => best;
+                    }
+
+                    if (best == lastPredicted) {
+                        best => currentClass;
+                        <<< currentClass >>>;
+                        noteRatios[currentClass] => ps.shift;
+                    }
+                    best => lastPredicted;
+                } else {
+                    0.0 => mute.gain;
                 }
-                <<< "predicted class:", best >>>;
+            } else if (msg.address == "/hand/present") {
+                msg.getFloat(0) $ int => handPresent;
             }
-        } else if (msg.address == "/hand/present") {
-            msg.getFloat(0) $ int => handPresent;
         }
     }
 }
+spork ~ oscListener();
+
+while (true) { 1::second => now; }
