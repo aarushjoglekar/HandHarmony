@@ -1,0 +1,4 @@
+python3 finger_detector.py & 
+chuck --bufsize:64 performer.ck
+
+kill %1

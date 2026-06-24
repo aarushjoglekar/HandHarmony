@@ -32,6 +32,7 @@ int lastPredicted;
 
 // pitch shift setup
 adc => PitShift ps => Gain mute => dac;
+adc => Gain regular => dac;
 1.0 => ps.mix;
 [1.0, 9.0/8, 5.0/4, 4.0/3, 3.0/2, 5.0/3, 15.0/8, 2.0] @=> float noteRatios[];
 
@@ -46,7 +47,8 @@ fun void oscListener() {
                 msg.getFloat(3) => features[3];
 
                 if (handPresent) {
-                    50.0 => mute.gain;
+                    3.0 => mute.gain;
+                    1.0 => regular.gain;
 
                     knn.predict(features, 5, prob);
                     0 => int best;
@@ -62,6 +64,7 @@ fun void oscListener() {
                     best => lastPredicted;
                 } else {
                     0.0 => mute.gain;
+                    0.0 => regular.gain;
                 }
             } else if (msg.address == "/hand/present") {
                 msg.getFloat(0) $ int => handPresent;
