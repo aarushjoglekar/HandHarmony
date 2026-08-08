@@ -15,7 +15,9 @@ HandHarmony is a simple app designed for people to play and harmonize melodies. 
 View demo [here](https://drive.google.com/file/d/1tIZBVOsYYksAM4a6rcwcV6qfdQL5X5Ct/view?usp=sharing)
 
 ### Running
-Clone this repository. In the terminal, run:
-```bash
-./run
-```
+<ol>
+  <li>Clone this repository</li>
+  <li>Create a virtual environment</li>
+  <li>Install packages from requirements.txt</li>
+  <li>In terminal: ./run</li>
+</ol>
